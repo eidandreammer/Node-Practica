@@ -53,6 +53,26 @@ server.post("/posts", (req, res) => {
     data: newPost,
   });
 });
+
+server.delete("/posts/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  const index = posts.findIndex((p) => p.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({
+      success: false,
+      message: "Post not found",
+    });
+  }
+  posts.splice(index, 1);
+
+  return res.status(200).json({
+    success: true,
+    message: "Post deleted successfully",
+  });
+});
+
 //listening the server
 server.listen(port, () => {
   console.log("Server running on port " + port);
