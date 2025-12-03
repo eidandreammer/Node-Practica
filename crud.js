@@ -1,79 +1,60 @@
-// defining the server
+//Creacion del servidor
 const express = require("express");
 const server = express();
 const port = 3000;
-
 server.use(express.json());
-//Creating a CRUD endpoints
-let posts = [
-  { id: 1, title: "First Post", content: "This is the first post." },
-  { id: 2, title: "Second Post", content: "This is the second post." },
-];
 
+//Definicion de endpoints o rutas
+let posts = [
+  { id: 1, title: "Primer post", content: "Contenido del primer post" },
+  { id: 2, title: "Segundo post", content: "Contenido del segundo post" },
+];
 server.get("/posts", (req, res) => {
-  res.status(200).json({
-    success: true,
-    data: posts,
-  });
+  res.json({ posts });
 });
 
 server.get("/posts/:id", (req, res) => {
   const id = Number(req.params.id);
-  const post = posts.find((p) => p.id === id);
+  const post = posts.find((post) => post.id === id);
 
   if (!post) {
     return res.status(404).json({
-      success: false,
-      message: "Post not found",
+      error: "Post no encontrado",
     });
   }
-  return res.status(200).json(post);
+
+  return res.status(200).json({ post });
 });
 
 server.post("/posts", (req, res) => {
   const { title, content } = req.body;
-  let newId = posts.length + 1;
 
   if (title === undefined || content === undefined) {
     return res.status(400).json({
-      success: false,
-      message: "The information is incomplete",
+      error: "Error con los parametros",
     });
   }
-
   const newPost = {
-    id: newId,
+    id: posts.length + 1,
     title,
     content,
   };
-  posts.push(newPost);
 
+  posts.push(newPost);
   return res.status(201).json({
-    success: true,
-    data: newPost,
+    message: "Post creado correctamente",
   });
 });
-
 server.delete("/posts/:id", (req, res) => {
   const id = Number(req.params.id);
-
-  const index = posts.findIndex((p) => p.id === id);
-
-  if (index === -1) {
+  const postIndex = posts.findIndex((post) => post.id === id);
+  if (postIndex === -1) {
     return res.status(404).json({
-      success: false,
-      message: "Post not found",
+      error: "Post no encontrado",
     });
   }
-  posts.splice(index, 1);
-
-  return res.status(200).json({
-    success: true,
-    message: "Post deleted successfully",
-  });
+  posts.splice(postIndex, 1);
 });
-
-//listening the server
 server.listen(port, () => {
-  console.log("Server running on port " + port);
+  console.log("Servidor escuchando en el puerto " + port);
 });
