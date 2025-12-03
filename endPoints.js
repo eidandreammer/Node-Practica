@@ -15,7 +15,7 @@ server.get("/saludo", (req, res) => {
   const { nombre } = req.query;
 
   // Valida que el parametro nombre exista
-  if (!nombre) {
+  if (nombre === "" || nombre === undefined) {
     return res.status(400).json({ Error: "Falta el parametro nombre" });
   }
   res.json("Hola " + nombre);
